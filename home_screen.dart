@@ -1,317 +1,523 @@
-import 'package:fleetcare_eld/screens/home/driver-switching_screen.dart/driver_switching_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:fleetcare_eld/screens/home/dvir/dvir_screen.dart';
 import 'package:fleetcare_eld/screens/home/forms/forms_screen.dart';
 import 'package:fleetcare_eld/screens/home/fueling/fueling_screen.dart';
 import 'package:fleetcare_eld/screens/home/hos/hours_of_service_screen.dart';
 import 'package:fleetcare_eld/screens/home/routes/routes_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:fleetcare_eld/models/duty_status.dart';
+import 'package:fleetcare_eld/screens/home/hos/select_note_screen.dart';
+import 'package:provider/provider.dart';
+import '../../providers/driver_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool showQuickActions = false;
+  int currentIndex = 0;
+
+  // ✅ REAL STATE
+  String vehicleNumber = "01";
+  List<String> trailers = [];
+
+  // controllers
+  final TextEditingController vehicleController = TextEditingController();
+  final TextEditingController trailerController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F7FC),
+      backgroundColor: Colors.white,
 
-      // 🔹 APP BAR
+      // 🔵 APP BAR
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: const Color(0xFF2AA6DF),
-        centerTitle: true,
-        title: const Text(
-          "Home",
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title:
+            const Text("Home Screen", style: TextStyle(color: Colors.white)),
         leading: IconButton(
-          icon: const Icon(Icons.settings_outlined),
-          onPressed: () {},
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            setState(() {
+              showQuickActions = !showQuickActions;
+            });
+          },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {},
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(Icons.notifications, color: Colors.red),
           ),
         ],
       ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
+      // 🔵 BODY
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              // USER + VEHICLE
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.person, size: 18),
+                        SizedBox(width: 6),
+                        Text("user",
+                            style: TextStyle(fontWeight: FontWeight.w600)),
+                      ],
+                    ),
 
-            // 🔹 TOP STATUS CARDS
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _topCard(
-                      icon: Icons.power_settings_new,
-                      title: "Off Duty",
-                      subtitle: "01:07",
-                      color: Colors.blue,
+                    // 🚚 VEHICLE CLICK
+                    InkWell(
+                      onTap: () => _openChangeEquipment(context),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.local_shipping),
+                          const SizedBox(width: 4),
+                          Text(vehicleNumber),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: _topCard(
-                      icon: Icons.local_shipping_outlined,
-                      title: "Shipping IDs",
-                      subtitle: "Vehicle",
-                      color: Colors.lightBlue,
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // ⏱ TIMER
+              SizedBox(
+                height: 200,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: CircularProgressIndicator(
+                        value: 0.75,
+                        strokeWidth: 10,
+                        color: Colors.grey.shade700,
+                        backgroundColor: Colors.grey.shade200,
+                      ),
                     ),
-                  ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("14:00",
+                            style: TextStyle(
+                                fontSize: 32, fontWeight: FontWeight.bold)),
+                        const Text("REMAINING"),
+                        const SizedBox(height: 6),
+                        Consumer<DriverProvider>(
+                          builder: (context, driver, _) {
+                            return InkWell(
+                              onTap: () => _openChangeStatus(context),
+                              child: Chip(
+                                label: Text(
+                                  driver.state.status.name.toUpperCase(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: _statusColor(driver.state.status),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const Spacer(),
+
+              // ⭕ CIRCLES
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                padding: const EdgeInsets.all(24),
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
+                children: const [
+                  _CircleInfo("8:00", "BREAK", Colors.amber),
+                  _CircleInfo("11:00", "DRIVING", Colors.green),
+                  _CircleInfo("14:00", "SHIFT", Colors.black),
+                  _CircleInfo("70:00", "CYCLE", Colors.blue),
                 ],
+              ),
+            ],
+          ),
+
+          // DIM
+          if (showQuickActions)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () => setState(() => showQuickActions = false),
+                child: Container(color: Colors.black.withOpacity(0.25)),
               ),
             ),
 
-            const SizedBox(height: 28),
-
-            // 🔹 QUICK ACTIONS TITLE
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "Quick Actions",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+          // LEFT PANEL
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 200),
+            left: showQuickActions ? 0 : -280,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 280,
+              color: const Color(0xFF1F1F1F),
+              child: SafeArea(
+                child: ListView(
+                  padding: const EdgeInsets.all(12),
+                  children: [
+                    _tile(Icons.timer, "HoS", () {
+                      setState(() => showQuickActions = false);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const HoursOfServiceScreen()));
+                    }),
+                    _tile(Icons.assignment, "DVIR", () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const DVIRScreen()));
+                    }),
+                    _tile(Icons.alt_route, "Routes", () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const RoutesScreen()));
+                    }),
+                    _tile(Icons.description, "Forms", () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const FormsScreen()));
+                    }),
+                    _tile(Icons.local_gas_station, "Fueling", () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const FuelingScreen()));
+                    }),
+                    _tile(Icons.folder, "Document", () {
+                    }),
+                    _tile(Icons.local_shipping, "Verticle", () {
+                    
+                    }),
+                    _tile(Icons.swap_horiz, "Driving", () {
+                    }),
+                    _tile(Icons.settings, "Settings", () {
+                    }),
+                  ],
                 ),
               ),
             ),
+          ),
+        ],
+      ),
 
-            const SizedBox(height: 14),
+      // 🔵 BOTTOM NAV
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF2AA6DF),
+        unselectedItemColor: Colors.grey,
+        onTap: (i) => setState(() => currentIndex = i),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.inbox), label: "Inbox"),
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: "Message"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        ],
+      ),
+    );
+  }
 
-            // 🔹 QUICK ACTION GRID
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                 shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  crossAxisCount: 3,
-  mainAxisSpacing: 14,
-  crossAxisSpacing: 14,
-  children: [
+  void _close() => setState(() => showQuickActions = false);
 
-    // HoS
-    GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const HoursOfServiceScreen(),
+  Color _statusColor(DutyStatus status) {
+    switch (status) {
+      case DutyStatus.offDuty:
+        return Colors.red;
+      case DutyStatus.sleeper:
+        return Colors.blue;
+      case DutyStatus.onDuty:
+        return Colors.green;
+      case DutyStatus.driving:
+        return Colors.grey;
+      case DutyStatus.yard:
+        return Colors.orange;
+      case DutyStatus.personal:
+        return Colors.purple;
+    }
+  }
+
+  Widget _tile(IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(label, style: const TextStyle(color: Colors.white)),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
+    );
+  }
+
+  // 🔽 CHANGE EQUIPMENT
+  void _openChangeEquipment(BuildContext context) {
+    vehicleController.text = vehicleNumber;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+              16, 20, 16, MediaQuery.of(context).viewInsets.bottom + 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Change Equipment",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+              const SizedBox(height: 20),
+
+              TextField(controller: vehicleController, decoration: const InputDecoration(labelText: "Vehicle")),
+
+              TextField(
+                controller: trailerController,
+                decoration: const InputDecoration(labelText: "Trailer"),
+              ),
+
+              TextButton(
+                onPressed: () {
+                  if (trailerController.text.isNotEmpty) {
+                    setState(() {
+                      trailers.add(trailerController.text);
+                      trailerController.clear();
+                    });
+                  }
+                },
+                child: const Text("Add Trailer"),
+              ),
+
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      vehicleNumber = vehicleController.text;
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Save"),
+                ),
+              ),
+
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+            ],
           ),
         );
       },
-      child: const _QuickAction(
-        icon: Icons.timer,
-        label: "HoS",
-        color: Colors.red,
-      ),
-    ),
-
-    // DVIR
-   GestureDetector(
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const DVIRScreen(),
-      ),
     );
-  },
-  child: _QuickAction(
-    icon: Icons.fact_check,
-    label: "DVIR",
-    color: Colors.green,
-  ),
-),
+  }
 
+  // 🔽 OPEN CHANGE STATUS
+  void _openChangeStatus(BuildContext context) {
+    String selectedNote = "Pre-trip Inspection";
+    DutyStatus pendingStatus = context.read<DriverProvider>().state.status;
 
-    // Routes
- GestureDetector(
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const RoutesScreen(),
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TITLE
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Change Status",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // STATUS GRID
+                    GridView.count(
+                      crossAxisCount: 3,
+                      shrinkWrap: true,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      children: [
+                        _statusTile("OFF", "OFF DUTY", Colors.red, DutyStatus.offDuty, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                        _statusTile("SB", "SLEEPER", Colors.blue, DutyStatus.sleeper, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                        _statusTile("ON", "ON DUTY", Colors.green, DutyStatus.onDuty, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                        _statusTile("D", "DRIVING", Colors.grey, DutyStatus.driving, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                        _statusTile("Y", "YARD", Colors.orange, DutyStatus.yard, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                        _statusTile("P", "PERSONAL", Colors.purple, DutyStatus.personal, pendingStatus, (status) {
+                          setModalState(() => pendingStatus = status);
+                        }),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // ADD NOTE
+                    ListTile(
+                      title: const Text("Add Note"),
+                      subtitle: Text(selectedNote),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () async {
+                        final note = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SelectNoteScreen(),
+                          ),
+                        );
+
+                        if (note != null) {
+                          setModalState(() => selectedNote = note);
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // UPDATE
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<DriverProvider>().updateStatus(pendingStatus, selectedNote);
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Update"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
-  },
-  child: _QuickAction(
-    icon: Icons.map_outlined,
-    label: "Routes",
-    color: Colors.orange,
-  ),
-),
+  }
 
+  // 🔽 STATUS TILE
+  Widget _statusTile(
+    String short,
+    String label,
+    Color color,
+    DutyStatus status,
+    DutyStatus selectedStatus,
+    Function(DutyStatus) onSelect,
+  ) {
+    final bool isSelected = selectedStatus == status;
 
-    // Forms
-    GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-           MaterialPageRoute(
-            builder: (_) => const FormsScreen()));
-
-      },
-      child: const _QuickAction(
-        icon: Icons.assignment,
-        label: "Forms",
-        color: Colors.pink,
-      ),
-    ),
-
-    // Documents
-    GestureDetector(
-      onTap: () {},
-      child: const _QuickAction(
-        icon: Icons.description,
-        label: "Documents",
-        color: Colors.purple,
-      ),
-    ),
-
-    // Vehicle
-    GestureDetector(
-      onTap: () {},
-      child: const _QuickAction(
-        icon: Icons.local_shipping,
-        label: "Vehicle",
-        color: Colors.amber,
-      ),
-    ),
-
-    // Driving Switching
-    GestureDetector(
-      onTap: () {
-        Navigator.push(context,
-  MaterialPageRoute(builder: (_) => const DriverSwitchingScreen()));
-      },
-      child: const _QuickAction(
-        icon: Icons.swap_horiz,
-        label: "Driving\nSwitching",
-        color: Colors.indigo,
-      ),
-    ),
-
-    // Fuelling
-    GestureDetector(
-      onTap: () {
-        Navigator.push(context,
-  MaterialPageRoute(builder: (_) => FuelingScreen()));
-      },
-      child: const _QuickAction(
-        icon: Icons.local_gas_station,
-        label: "Fuelling",
-        color: Colors.teal,
-      ),
-    ),
-
-    // More
-    GestureDetector(
-      onTap: () {},
-      child: const _QuickAction(
-        icon: Icons.more_horiz,
-        label: "More",
-        color: Colors.blueGrey,
-      ),
-    ),
-  ],
-),
-
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => onSelect(status),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? color.withOpacity(0.15) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? color : Colors.grey.shade300,
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: isSelected ? color : Colors.grey.shade300,
+              child: Text(
+                short,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black54,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-
-            const SizedBox(height: 24),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? color : Colors.black54,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  // 🔹 TOP CARD
-  Widget _topCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 22),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: color.withOpacity(0.25),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-// 🔹 QUICK ACTION TILE
-class _QuickAction extends StatelessWidget {
-  final IconData icon;
+/* ---------- CIRCLE ---------- */
+
+class _CircleInfo extends StatelessWidget {
+  final String time;
   final String label;
   final Color color;
 
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _CircleInfo(this.time, this.label, this.color);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-          ),
-        ],
+        shape: BoxShape.circle,
+        border: Border.all(color: color, width: 6),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: color.withOpacity(0.18),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(time,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(label),
+          ],
+        ),
       ),
     );
   }
