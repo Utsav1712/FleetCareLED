@@ -15,6 +15,7 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/hos/bindings/hours_of_service_binding.dart';
 import '../modules/hos/views/hours_of_service_view.dart';
 import '../modules/dvir/views/dvir_view.dart';
 import '../modules/routes/views/routes_view.dart';
@@ -88,6 +89,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.HOS,
       page: () => const HoursOfServiceView(),
+      binding: HoursOfServiceBinding(),
     ),
     GetPage(
       name: AppRoutes.DVIR,

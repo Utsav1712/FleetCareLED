@@ -1,173 +1,258 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../core/values/app_colors.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_text.dart';
+
+import '../controllers/hours_of_service_controller.dart';
 
 class HoursOfServiceView extends StatelessWidget {
   const HoursOfServiceView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: const CustomText(
-          "Hours of Service",
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.settings),
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // 🔴 Return to Rest Mode
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.redLight,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.refresh, color: AppColors.error, size: 18),
-                  SizedBox(width: 6),
-                  CustomText("Return to Rest Mode", color: AppColors.error),
-                ],
-              ),
+    return GetBuilder<HoursOfServiceController>(
+      init: HoursOfServiceController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: AppColors.scaffoldBackground,
+          appBar: AppBar(
+            backgroundColor: AppColors.primary,
+            title: CustomText(
+              "Hours of Service",
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 14),
-
-            // 🔵 Off Duty Card
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                // Navigate to Edit Log
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.lightBlueBg,
-                  borderRadius: BorderRadius.circular(16),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, size: 20.sp),
+              onPressed: () => Get.back(),
+            ),
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 3.w),
+                child: Icon(Icons.settings, size: 20.sp),
+              )
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: EdgeInsets.all(4.w),
+            child: Column(
+              children: [
+                // 🔴 Return to Rest Mode
+                Container(
+                  padding: EdgeInsets.all(2.5.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.redLight,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.refresh, color: AppColors.error, size: 18.sp),
+                      SizedBox(width: 1.5.w),
+                      const CustomText("Return to Rest Mode",
+                          color: AppColors.error),
+                    ],
+                  ),
                 ),
-                child: const Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.power_settings_new,
-                        color: AppColors.primary,
-                      ),
+                SizedBox(height: 2.h),
+
+                // 🔵 Off Duty Card
+                InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    // Navigate to Edit Log
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightBlueBg, // Restore Blue BG
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        CustomText(
-                          "Off Duty",
-                          fontWeight: FontWeight.w600,
+                        Container(
+                          height: 13.w,
+                          width: 13.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Colors.white, Color(0xFFB3E5FC)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blue.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.power_settings_new,
+                            color: AppColors.primary,
+                            size: 24.sp,
+                          ),
                         ),
-                        CustomText(
-                          "01:07",
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
+                        SizedBox(width: 3.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              "Off Duty",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 17.sp,
+                            ),
+                            SizedBox(height: 0.5.h),
+                            CustomText(
+                              "01:07",
+                              color: AppColors.textSecondary,
+                              fontSize: 15.sp,
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                  ),
+                ),
+                SizedBox(height: 2.h),
+
+                // ⏱ Time Boxes
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 3.w,
+                  crossAxisSpacing: 3.w,
+                  childAspectRatio: 1.2, // Taller boxes to prevent overflow
+                  children: const [
+                    _TimeBox("08:00", "Until Break"),
+                    _TimeBox("11:00", "Drive"),
+                    _TimeBox("14:00", "Total Shift"),
+                    _TimeBox("70:00", "Cycle"),
                   ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
+                SizedBox(height: 2.h),
 
-            // ⏱ Time Boxes
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              children: const [
-                _TimeBox("08:00", "Until Break"),
-                _TimeBox("11:00", "Drive"),
-                _TimeBox("14:00", "Total Shift"),
-                _TimeBox("70:00", "Cycle"),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // 🇺🇸 USA Property
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.lightBlueBg,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText("USA Property (8/70)",
-                      fontWeight: FontWeight.w600),
-                  CustomText("70:00h / 70h", color: AppColors.textSecondary),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // 🔘 Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    label: "Logbook",
-                    onPressed: () {},
+                // 🇺🇸 USA Property
+                Container(
+                  padding: EdgeInsets.all(4.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightBlueBg, // Restore Blue BG
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomText("USA Property (8/70)",
+                              fontWeight: FontWeight.w600, fontSize: 16.sp),
+                        ],
+                      ),
+                      SizedBox(height: 1.h),
+                      const Divider(color: Colors.white),
+                      SizedBox(height: 1.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomText("USA Property (8/70)",
+                              color: AppColors.textSecondary, fontSize: 14.sp),
+                          CustomText("70:00h / 70h",
+                              color: AppColors.textSecondary, fontSize: 14.sp),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: CustomButton(
-                    label: "Search Client",
-                    isOutlined: true,
-                    onPressed: () {},
+                SizedBox(height: 2.h),
+                // 🔘 Buttons (Logbook / Search Client)
+                Container(
+                  width: double.infinity,
+                  height: 6.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => controller.toggleView(true),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: controller.isLogbook.value
+                                    ? AppColors.primary
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              alignment: Alignment.center,
+                              child: CustomText(
+                                "Logbook",
+                                color: controller.isLogbook.value
+                                    ? Colors.white
+                                    : Colors.black, // Or AppColors.textPrimary
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => controller.toggleView(false),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: !controller.isLogbook.value
+                                    ? AppColors.primary
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              alignment: Alignment.center,
+                              child: CustomText(
+                                "Search Client",
+                                color: !controller.isLogbook.value
+                                    ? Colors.white
+                                    : Colors.black, // Or AppColors.textPrimary
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2.h),
+
+                // 📜 Certified list
+                Container(
+                  padding: EdgeInsets.all(4.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Column(
+                    children: [
+                      _CertRow("Today", "00:00 hours", "Uncertified"),
+                      _CertRow("Sat, Oct 18", "00:00 hours", "Uncertified"),
+                      _CertRow("Fri, Oct 17", "00:00 hours", "Uncertified"),
+                      _CertRow("Thu, Oct 16", "00:00 hours", "Certified"),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
-
-            // 📜 Certified list
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Column(
-                children: [
-                  _CertRow("Today", "00:00 hours", "Uncertified"),
-                  _CertRow("Sat, Oct 18", "00:00 hours", "Uncertified"),
-                  _CertRow("Fri, Oct 17", "00:00 hours", "Uncertified"),
-                  _CertRow("Thu, Oct 16", "00:00 hours", "Certified"),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -178,24 +263,35 @@ class _TimeBox extends StatelessWidget {
   const _TimeBox(this.time, this.label);
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: AppColors.lightGreenBg,
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.lightGreenBg, // Light Green BG
+        borderRadius: BorderRadius.circular(16.sp),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            radius: 16,
-            backgroundColor: AppColors.lightGreenIconBg,
-            child: Icon(Icons.access_time, size: 16, color: AppColors.success),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(2.w),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.success, width: 1.5.sp),
+                ),
+                child: Icon(Icons.access_time,
+                    size: 16.sp, color: AppColors.success),
+              ),
+              SizedBox(width: 3.w),
+              CustomText(time, fontSize: 18.sp, fontWeight: FontWeight.bold),
+            ],
           ),
-          const SizedBox(height: 10),
-          CustomText(time, fontSize: 20, fontWeight: FontWeight.bold),
-          CustomText(label, fontSize: 12, color: AppColors.textSecondary),
+          SizedBox(height: 1.5.h),
+          CustomText(label, fontSize: 16.sp, color: Colors.black87),
         ],
       ),
     );
@@ -214,7 +310,7 @@ class _CertRow extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       onTap: () {},
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 1.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -222,7 +318,8 @@ class _CertRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(day, fontWeight: FontWeight.w600),
-                CustomText(time, fontSize: 12, color: AppColors.textSecondary),
+                CustomText(time,
+                    fontSize: 12.sp, color: AppColors.textSecondary),
               ],
             ),
             Row(
@@ -231,9 +328,8 @@ class _CertRow extends StatelessWidget {
                   status,
                   color: isCertified ? AppColors.success : AppColors.error,
                 ),
-                const SizedBox(width: 6),
-                const Icon(Icons.chevron_right,
-                    size: 18, color: Colors.black38),
+                SizedBox(width: 1.5.w),
+                Icon(Icons.chevron_right, size: 18.sp, color: Colors.black38),
               ],
             ),
           ],
