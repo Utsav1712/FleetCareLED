@@ -18,6 +18,7 @@ abstract class AppRoutes {
   static const FUELING = _Paths.FUELING;
   static const CO_DRIVER_LOGIN = _Paths.CO_DRIVER_LOGIN;
   static const SPLASH = _Paths.SPLASH;
+  static const DAILY_LOG = _Paths.DAILY_LOG;
 }
 
 abstract class _Paths {
@@ -40,4 +41,5 @@ abstract class _Paths {
   static const FUELING = '/fueling';
   static const CO_DRIVER_LOGIN = '/co-driver-login';
   static const SPLASH = '/splash';
+  static const DAILY_LOG = '/daily-log';
 }

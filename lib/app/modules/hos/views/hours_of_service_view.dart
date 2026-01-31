@@ -6,6 +6,7 @@ import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_text.dart';
 
 import '../controllers/hours_of_service_controller.dart';
+import '../../../routes/app_routes.dart';
 
 class HoursOfServiceView extends StatelessWidget {
   const HoursOfServiceView({Key? key}) : super(key: key);
@@ -32,7 +33,11 @@ class HoursOfServiceView extends StatelessWidget {
             actions: [
               Padding(
                 padding: EdgeInsets.only(right: 3.w),
-                child: Icon(Icons.settings, size: 20.sp),
+                child: IconButton(
+                  icon: Icon(Icons.settings, size: 20.sp),
+                  onPressed: () => Get.toNamed(AppRoutes.DAILY_LOG),
+                  color: Colors.white,
+                ),
               )
             ],
           ),

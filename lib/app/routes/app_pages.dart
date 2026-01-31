@@ -23,6 +23,8 @@ import '../modules/forms/views/forms_view.dart';
 import '../modules/fueling/views/fueling_view.dart';
 import '../modules/co_driver_login/bindings/co_driver_login_binding.dart';
 import '../modules/co_driver_login/views/co_driver_login_view.dart';
+import '../modules/daily_log/bindings/daily_log_binding.dart';
+import '../modules/daily_log/views/daily_log_view.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -111,6 +113,11 @@ class AppPages {
       name: AppRoutes.CO_DRIVER_LOGIN,
       page: () => const CoDriverLoginView(),
       binding: CoDriverLoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DAILY_LOG,
+      page: () => const DailyLogView(),
+      binding: DailyLogBinding(),
     ),
   ];
 }

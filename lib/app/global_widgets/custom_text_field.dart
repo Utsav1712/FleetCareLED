@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../core/values/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -26,28 +27,28 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       onChanged: onChanged,
-      style: const TextStyle(
-        fontSize: 14,
+      style: TextStyle(
+        fontSize: 15.sp, // Responsive font
         color: AppColors.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
+        hintStyle: TextStyle(color: AppColors.textHint, fontSize: 15.sp),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: EdgeInsets.symmetric(
+            horizontal: 4.w, vertical: 1.5.h), // Responsive padding
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.sp), // Responsive radius
           borderSide: const BorderSide(color: AppColors.inputBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.sp),
           borderSide: const BorderSide(color: AppColors.inputBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.sp),
           borderSide: const BorderSide(color: AppColors.primary),
         ),
       ),
