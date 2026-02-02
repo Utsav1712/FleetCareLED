@@ -1,205 +1,132 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/duty_status.dart';
-import '../../../core/values/app_colors.dart';
 import '../controllers/home_controller.dart';
-import '../../../routes/app_routes.dart';
-import 'widgets/select_note_widget.dart';
 import 'home_drawer.dart';
-// Note: Imports for sub-screens will be added as they are migrated
-// import 'hos/hours_of_service_screen.dart';
-// import 'dvir/dvir_screen.dart';
-// ...
+import 'widgets/select_note_widget.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      init: HomeController(),
-      builder: (controller) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-
-          // 🔵 APP BAR
-          appBar: AppBar(
-            backgroundColor: const Color(0xFF2AA6DF),
-            title: const Text("Home Screen",
-                style: TextStyle(color: Colors.white)),
-            leading: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: controller.toggleQuickActions,
-            ),
-            actions: const [
-              Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: Icon(Icons.notifications, color: Colors.red),
-              ),
-            ],
-          ),
-
-          // 🔵 BODY
-          body: Stack(
-            children: [
-              Column(
+    return Stack(
+      children: [
+        Column(
+          children: [
+            // USER + VEHICLE
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // USER + VEHICLE
-                  Padding(
-                    padding: const EdgeInsets.all(16),
+                  InkWell(
+                    // Navigate to Profile tab (Index 3) using DashboardController
+                    onTap: () {
+                      final dashboardController =
+                          Get.find<DashboardController>();
+                      dashboardController.changeTab(3);
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.person, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                          "user",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 🚚 VEHICLE CLICK
+                  InkWell(
+                    onTap: () => _openChangeEquipment(context, controller),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.person, size: 18),
-                            SizedBox(width: 6),
-                            Text(
-                              "user",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-
-                        // 🚚 VEHICLE CLICK
-                        InkWell(
-                          onTap: () =>
-                              _openChangeEquipment(context, controller),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.local_shipping),
-                              const SizedBox(width: 4),
-                              Obx(() => Text(controller.vehicleNumber.value)),
-                            ],
-                          ),
-                        ),
+                        const Icon(Icons.local_shipping),
+                        const SizedBox(width: 4),
+                        Obx(() => Text(controller.vehicleNumber.value)),
                       ],
                     ),
                   ),
+                ],
+              ),
+            ),
 
-                  const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-                  // ⏱ TIMER
+            // ⏱ TIMER
+            SizedBox(
+              height: 200,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
                   SizedBox(
-                    height: 200,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 180,
-                          height: 180,
-                          child: CircularProgressIndicator(
-                            value: 0.75,
-                            strokeWidth: 10,
-                            color: Colors.grey.shade700,
-                            backgroundColor: Colors.grey.shade200,
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "14:00",
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Text("REMAINING"),
-                            const SizedBox(height: 6),
-
-                            // Status Chip using Obx
-                            Obx(
-                              () => InkWell(
-                                onTap: () =>
-                                    _openChangeStatus(context, controller),
-                                child: Chip(
-                                  label: Text(
-                                    controller.currentStatus.value.name
-                                        .toUpperCase(),
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: controller.getStatusColor(
-                                    controller.currentStatus.value,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    width: 180,
+                    height: 180,
+                    child: CircularProgressIndicator(
+                      value: 0.75,
+                      strokeWidth: 10,
+                      color: Colors.grey.shade700,
+                      backgroundColor: Colors.grey.shade200,
                     ),
                   ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "14:00",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Text("REMAINING"),
+                      const SizedBox(height: 6),
 
-                  const Spacer(),
-
-                  // ⭕ CIRCLES
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    padding: const EdgeInsets.all(24),
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
-                    children: const [
-                      _CircleInfo("8:00", "BREAK", Colors.amber),
-                      _CircleInfo("11:00", "DRIVING", Colors.green),
-                      _CircleInfo("14:00", "SHIFT", Colors.black),
-                      _CircleInfo("70:00", "CYCLE", Colors.blue),
+                      // Status Chip using Obx
+                      Obx(
+                        () => InkWell(
+                          onTap: () => _openChangeStatus(context, controller),
+                          child: Chip(
+                            label: Text(
+                              controller.currentStatus.value.name.toUpperCase(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: controller.getStatusColor(
+                              controller.currentStatus.value,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
+            ),
 
-              // DIM Overlay
-              Obx(
-                () => controller.showQuickActions.value
-                    ? Positioned.fill(
-                        child: GestureDetector(
-                          onTap: controller.closeQuickActions,
-                          child:
-                              Container(color: Colors.black.withOpacity(0.25)),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+            const Spacer(),
 
-              // LEFT PANEL (DRAWER)
-              Obx(
-                () => AnimatedPositioned(
-                  duration: const Duration(milliseconds: 200),
-                  left: controller.showQuickActions.value ? 0 : -280,
-                  top: 0,
-                  bottom: 0,
-                  child: HomeDrawer(controller: controller),
-                ),
-              ),
-            ],
-          ),
-
-          // 🔵 BOTTOM NAV
-          bottomNavigationBar: Obx(
-            () => BottomNavigationBar(
-              currentIndex: controller.currentIndex.value,
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: const Color(0xFF2AA6DF),
-              unselectedItemColor: Colors.grey,
-              onTap: controller.changeTab,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.inbox), label: "Inbox"),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.message),
-                  label: "Message",
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: "Profile"),
+            // ⭕ CIRCLES
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              padding: const EdgeInsets.all(24),
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              children: const [
+                _CircleInfo("8:00", "BREAK", Colors.amber),
+                _CircleInfo("11:00", "DRIVING", Colors.green),
+                _CircleInfo("14:00", "SHIFT", Colors.black),
+                _CircleInfo("70:00", "CYCLE", Colors.blue),
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ],
     );
   }
 
@@ -321,7 +248,12 @@ class HomeView extends StatelessWidget {
                       controller,
                     ),
                     _statusTile(
-                        "Y", "YARD", Colors.grey, DutyStatus.yard, controller),
+                      "Y",
+                      "YARD",
+                      Colors.grey,
+                      DutyStatus.yard,
+                      controller,
+                    ),
                     _statusTile(
                       "P",
                       "PERSONAL",

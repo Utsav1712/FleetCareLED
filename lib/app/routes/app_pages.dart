@@ -1,3 +1,7 @@
+import 'package:fleetcare_eld/app/modules/dashboard/bindings/dashboard_binding.dart';
+import 'package:fleetcare_eld/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:fleetcare_eld/app/modules/settings/bindings/settings_binding.dart';
+import 'package:fleetcare_eld/app/modules/settings/views/settings_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/assignment/bindings/assignment_binding.dart';
@@ -11,6 +15,8 @@ import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/signup_view.dart';
 import '../modules/auth/views/forgot_password_view.dart';
+import '../modules/edit_profile/bindings/edit_profile_binding.dart';
+import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
@@ -118,6 +124,21 @@ class AppPages {
       name: AppRoutes.DAILY_LOG,
       page: () => const DailyLogView(),
       binding: DailyLogBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.EDIT_PROFILE,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DASHBOARD,
+      page: () => const DashboardView(),
+      binding: DashboardBinding(),
     ),
   ];
 }

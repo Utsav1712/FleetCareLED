@@ -84,6 +84,6 @@ class AssignmentController extends GetxController {
 
   void completeAssignment() {
     // Save logic here
-    Get.offAllNamed(AppRoutes.HOME);
+    Get.offAllNamed(AppRoutes.DASHBOARD);
   }
 }
