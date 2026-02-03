@@ -1,5 +1,11 @@
 import 'package:fleetcare_eld/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:fleetcare_eld/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:fleetcare_eld/app/modules/driver_switching/bindings/driver_switching_binding.dart';
+import 'package:fleetcare_eld/app/modules/driver_switching/views/driver_switching_view.dart';
+import 'package:fleetcare_eld/app/modules/dvir/bindings/dvir_binding.dart';
+import 'package:fleetcare_eld/app/modules/dvir/views/create_dvir_view.dart';
+import 'package:fleetcare_eld/app/modules/help/bindings/help_binding.dart';
+import 'package:fleetcare_eld/app/modules/help/views/help_view.dart';
 import 'package:fleetcare_eld/app/modules/settings/bindings/settings_binding.dart';
 import 'package:fleetcare_eld/app/modules/settings/views/settings_view.dart';
 import 'package:get/get.dart';
@@ -102,6 +108,17 @@ class AppPages {
     GetPage(
       name: AppRoutes.DVIR,
       page: () => const DvirView(),
+      binding: DvirBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CREATE_DVIR,
+      page: () => const CreateDvirView(),
+      binding: DvirBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DRIVER_SWITCHING,
+      page: () => const DriverSwitchingView(),
+      binding: DriverSwitchingBinding(),
     ),
     GetPage(
       name: AppRoutes.ROUTES,
@@ -139,6 +156,11 @@ class AppPages {
       name: AppRoutes.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.HELP,
+      page: () => const HelpView(),
+      binding: HelpBinding(),
     ),
   ];
 }

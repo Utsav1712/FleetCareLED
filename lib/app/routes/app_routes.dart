@@ -22,6 +22,9 @@ abstract class AppRoutes {
   static const SETTINGS = _Paths.SETTINGS;
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
   static const DASHBOARD = _Paths.DASHBOARD;
+  static const HELP = _Paths.HELP;
+  static const CREATE_DVIR = _Paths.CREATE_DVIR;
+  static const DRIVER_SWITCHING = _Paths.DRIVER_SWITCHING;
 }
 
 abstract class _Paths {
@@ -48,4 +51,7 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const EDIT_PROFILE = '/edit-profile';
   static const DASHBOARD = '/dashboard';
+  static const HELP = '/help';
+  static const CREATE_DVIR = '/create_dvir';
+  static const DRIVER_SWITCHING = '/driver_switching';
 }

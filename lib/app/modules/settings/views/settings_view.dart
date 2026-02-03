@@ -5,154 +5,209 @@ import '../../../core/values/app_colors.dart';
 import '../../../global_widgets/custom_text.dart';
 import '../controllers/settings_controller.dart';
 
-class SettingsView extends StatelessWidget {
+class SettingsView extends GetView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<SettingsController>(
-      builder: (controller) {
-        return Scaffold(
-          backgroundColor: AppColors.scaffoldBackground,
-          appBar: AppBar(
-            title: CustomText("Settings",
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600),
-            backgroundColor: AppColors.primary,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, size: 21.sp),
-              onPressed: () => Get.back(),
-            ),
-          ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(4.w),
-            child: Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: CustomText(
+          "Setting",
+          color: Colors.white,
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w600,
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF2AA6DF),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit_outlined, color: Colors.white, size: 20.sp),
+            onPressed: () {
+              // Edit action placeholder
+            },
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+        child: Column(
+          children: [
+            _buildSection(
+              title: "General",
               children: [
-                _buildSettingsTile(
-                  icon: Icons.help_outline,
-                  title: "Help",
-                  subtitle: "Official documents & guides",
-                  onTap: () => _showHelpDialog(context, controller),
-                ),
-                _buildSettingsTile(
-                  icon: Icons.timer,
-                  title: "HOS Exemptions",
-                  subtitle: "USA & Canada exemptions",
-                  onTap: () => _showExemptionsDialog(context, controller),
-                ),
-                _buildSettingsTile(
-                  icon: Icons.build,
-                  title: "OBD Troubleshooting",
-                  subtitle: "Diagnostics & Connection",
-                  onTap: () => _showObdDialog(context, controller),
-                ),
+                _buildItem("Help", onTap: controller.openHelp),
+                _buildItem("Language", onTap: controller.changeLanguage),
+                _buildItem("Theme", onTap: controller.changeTheme),
+                _buildItem("Font", onTap: controller.openFontSettings),
+                _buildItem("Display & Brightness",
+                    onTap: controller.openDisplaySettings),
               ],
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSettingsTile(
-      {required IconData icon,
-      required String title,
-      required String subtitle,
-      required VoidCallback onTap}) {
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.only(bottom: 2.h),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.lightBlueBg,
-          child: Icon(icon, color: AppColors.primary),
+            SizedBox(height: 2.h),
+            _buildSection(
+              title: "HOS & Compliance",
+              children: [
+                _buildItem("HOS Settings", onTap: controller.openHosSettings),
+                _buildItem("USA Exemptions",
+                    onTap: () => _showExemptionsDialog(context, controller,
+                        isUsa: true)),
+                _buildItem("Canada Exemptions",
+                    onTap: () => _showExemptionsDialog(context, controller,
+                        isUsa: false)),
+              ],
+            ),
+            SizedBox(height: 2.h),
+            _buildSection(
+              title: "Vehicle & Device",
+              children: [
+                _buildItem("Pin vehicle to device",
+                    onTap: controller.pinVehicleToDevice),
+                _buildItem("Permissions Status",
+                    onTap: controller.checkPermissionsStatus),
+                _buildItem("OBD Troubleshooting",
+                    onTap: () => _showObdDialog(context, controller)),
+              ],
+            ),
+            SizedBox(height: 2.h),
+            _buildSection(
+              title: "Application Details",
+              children: [
+                _buildItem("Send Feedback", onTap: controller.sendFeedback),
+                _buildItem("Version", onTap: controller.showVersion),
+              ],
+            ),
+            SizedBox(height: 4.h),
+          ],
         ),
-        title: CustomText(title, fontWeight: FontWeight.bold, fontSize: 16.sp),
-        subtitle: CustomText(subtitle, color: Colors.grey, fontSize: 14.sp),
-        trailing: Icon(Icons.chevron_right, size: 20.sp),
-        onTap: onTap,
-        contentPadding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
       ),
     );
   }
 
-  // 📄 Help Dialog
-  void _showHelpDialog(BuildContext context, SettingsController controller) {
-    Get.defaultDialog(
-      title: "Official Documents",
-      content: Column(
+  Widget _buildSection(
+      {required String title, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(
+            0xFFF7F9FC), // Light grey/blue background for the specific item
+        // Actually the image shows the Header has a background, and the items are below.
+        // Let's wrap everything in a "Card" lookalike.
+        borderRadius: BorderRadius.circular(12.sp),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-            title: const Text("User Manual (USA)"),
-            onTap: () {},
+          // Header
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEBF7FC), // Light blue header background
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.sp),
+                topRight: Radius.circular(12.sp),
+              ),
+            ),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-            title: const Text("User Manual (Canada)"),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.description, color: Colors.blue),
-            title: const Text("DOT Reference Card"),
-            onTap: () {},
+          // Items
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F9FC), // Very light background for items
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(12.sp),
+                bottomRight: Radius.circular(12.sp),
+              ),
+            ),
+            child: Column(
+              children: children,
+            ),
           ),
         ],
       ),
-      confirm:
-          TextButton(onPressed: () => Get.back(), child: const Text("Close")),
     );
   }
 
-  // 🚛 Exemptions Dialog
+  Widget _buildItem(String title, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
+          ),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 🚛 Exemptions Dialog - Re-implemented to support existing controller logic but cleaner
   void _showExemptionsDialog(
-      BuildContext context, SettingsController controller) {
+      BuildContext context, SettingsController controller,
+      {required bool isUsa}) {
     Get.defaultDialog(
-      title: "HOS Exemptions",
+      title: isUsa ? "USA Exemptions" : "Canada Exemptions",
       content: SizedBox(
         width: 80.w,
-        height: 50.h,
+        height: 40.h,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText("USA Exemptions",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                  color: AppColors.primary),
-              Obx(() => SwitchListTile(
-                    title: const Text("16 Hour Short Haul"),
-                    value: controller.is16HourShortHaulEnabled.value,
-                    onChanged: controller.toggle16HourShortHaul,
-                  )),
-              Obx(() => SwitchListTile(
-                    title: const Text("Adverse Driving"),
-                    value: controller.isAdverseDrivingUSAEnabled.value,
-                    onChanged: controller.toggleAdverseDrivingUSA,
-                  )),
-              Obx(() => SwitchListTile(
-                    title: const Text("Agriculture"),
-                    value: controller.isAgricultureEnabled.value,
-                    onChanged: controller.toggleAgriculture,
-                  )),
-              const Divider(),
-              CustomText("Canada Exemptions",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                  color: AppColors.primary),
-              Obx(() => SwitchListTile(
-                    title: const Text("Adverse Driving Condition"),
-                    value: controller.isAdverseDrivingCanadaEnabled.value,
-                    onChanged: controller.toggleAdverseDrivingCanada,
-                  )),
-              Obx(() => SwitchListTile(
-                    title: const Text("Deferral of Daily Off-Duty"),
-                    value: controller.isDeferralOffDutyEnabled.value,
-                    onChanged: controller.toggleDeferralOffDuty,
-                  )),
-            ],
+            children: isUsa
+                ? [
+                    Obx(() => SwitchListTile(
+                          title: const Text("16 Hour Short Haul"),
+                          value: controller.is16HourShortHaulEnabled.value,
+                          onChanged: controller.toggle16HourShortHaul,
+                        )),
+                    Obx(() => SwitchListTile(
+                          title: const Text("Adverse Driving"),
+                          value: controller.isAdverseDrivingUSAEnabled.value,
+                          onChanged: controller.toggleAdverseDrivingUSA,
+                        )),
+                    Obx(() => SwitchListTile(
+                          title: const Text("Agriculture"),
+                          value: controller.isAgricultureEnabled.value,
+                          onChanged: controller.toggleAgriculture,
+                        )),
+                  ]
+                : [
+                    Obx(() => SwitchListTile(
+                          title: const Text("Adverse Driving Condition"),
+                          value: controller.isAdverseDrivingCanadaEnabled.value,
+                          onChanged: controller.toggleAdverseDrivingCanada,
+                        )),
+                    Obx(() => SwitchListTile(
+                          title: const Text("Deferral of Daily Off-Duty"),
+                          value: controller.isDeferralOffDutyEnabled.value,
+                          onChanged: controller.toggleDeferralOffDuty,
+                        )),
+                  ],
           ),
         ),
       ),

@@ -29,7 +29,7 @@ class HomeDrawer extends StatelessWidget {
                   Obx(() => controller.isCoDriverLoggedIn.value
                       ? _tile(Icons.swap_horiz, "Switch Driver", () {
                           controller.closeQuickActions();
-                          controller.switchDriver();
+                          Get.toNamed(AppRoutes.DRIVER_SWITCHING);
                         })
                       : const SizedBox.shrink()),
 

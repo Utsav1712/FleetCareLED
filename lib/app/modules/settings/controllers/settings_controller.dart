@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_routes.dart';
 
 class SettingsController extends GetxController {
   // HOS Exemptions - USA
@@ -56,6 +57,29 @@ class SettingsController extends GetxController {
   void toggleLocation(bool val) => isLocationEnabled.value = val;
   void toggleStorage(bool val) => isStorageEnabled.value = val;
   void toggleBluetooth(bool val) => isBluetoothEnabled.value = val;
+
+  // General Settings Placeholders
+  void openHelp() => Get.toNamed(AppRoutes.HELP);
+  void changeLanguage() =>
+      Get.snackbar("Language", "Language selection coming soon");
+  void changeTheme() => Get.snackbar("Theme", "Theme selection coming soon");
+  void openFontSettings() => Get.snackbar("Font", "Font settings coming soon");
+  void openDisplaySettings() =>
+      Get.snackbar("Display", "Display & Brightness settings coming soon");
+
+  // HOS Settings Placeholder
+  void openHosSettings() =>
+      Get.snackbar("HOS Settings", "HOS Configuration coming soon");
+
+  // Vehicle Placeholder
+  void pinVehicleToDevice() =>
+      Get.snackbar("Vehicle", "Pin Vehicle to Device coming soon");
+  void checkPermissionsStatus() =>
+      Get.snackbar("Permissions", "Permissions Status checking...");
+
+  // App Details
+  void sendFeedback() => Get.snackbar("Feedback", "Feedback form coming soon");
+  void showVersion() => Get.snackbar("Version", "Version 1.0.0");
 
   // OBD Methods
   void scanForObd() async {
