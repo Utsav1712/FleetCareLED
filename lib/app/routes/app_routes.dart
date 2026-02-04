@@ -25,6 +25,8 @@ abstract class AppRoutes {
   static const HELP = _Paths.HELP;
   static const CREATE_DVIR = _Paths.CREATE_DVIR;
   static const DRIVER_SWITCHING = _Paths.DRIVER_SWITCHING;
+  static const ADD_DEFECT = _Paths.ADD_DEFECT;
+  static const DOT_INSPECTION = _Paths.DOT_INSPECTION;
 }
 
 abstract class _Paths {
@@ -54,4 +56,6 @@ abstract class _Paths {
   static const HELP = '/help';
   static const CREATE_DVIR = '/create_dvir';
   static const DRIVER_SWITCHING = '/driver_switching';
+  static const ADD_DEFECT = '/add-defect';
+  static const DOT_INSPECTION = '/dot-inspection';
 }

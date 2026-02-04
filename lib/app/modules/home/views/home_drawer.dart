@@ -62,6 +62,10 @@ class HomeDrawer extends StatelessWidget {
                     controller.closeQuickActions();
                     Get.toNamed(AppRoutes.SETTINGS);
                   }),
+                  _tile(Icons.local_police, "DOT Inspection Mode", () {
+                    controller.closeQuickActions();
+                    Get.toNamed(AppRoutes.DOT_INSPECTION);
+                  }),
                 ],
               ),
             ),

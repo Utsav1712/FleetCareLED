@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../../core/values/app_colors.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_text_field.dart';
+import '../../../global_widgets/custom_text.dart';
 import '../controllers/assignment_controller.dart';
 
 class SelectVehicleView extends StatelessWidget {
@@ -10,77 +15,118 @@ class SelectVehicleView extends StatelessWidget {
     return GetBuilder<AssignmentController>(
       builder: (controller) {
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text("Select Vehicle"),
-            backgroundColor: Colors.blue,
+            title: CustomText(
+              "Select Vehicle",
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            centerTitle: true,
+            backgroundColor: AppColors.primary,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: Colors.white, size: 20.sp),
               onPressed: () => Get.back(),
             ),
+            actions: [
+              IconButton(
+                icon:
+                    Icon(Icons.edit_outlined, color: Colors.white, size: 20.sp),
+                onPressed: () {},
+              )
+            ],
           ),
           body: Column(
             children: [
               // 🔍 Search bar
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search here...",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                padding: EdgeInsets.all(4.w),
+                child: CustomTextField(
+                  hintText: "Search here...",
+                  suffixIcon:
+                      Icon(Icons.search, color: Colors.grey, size: 20.sp),
                 ),
               ),
 
-              // Suggested
-              _sectionTitle("Suggested (1)"),
-
-              // Assuming keeping "305" as hardcoded suggested for now matching original
-              _vehicleTile(
-                vehicleNo: "305",
-                subtitle: "Last Selected",
-                controller: controller,
-              ),
-
-              _sectionTitle(
-                  "Other Vehicles (\${controller.otherVehicles.length})"),
-
               Expanded(
-                child: ListView.builder(
-                  itemCount: controller.otherVehicles.length,
-                  itemBuilder: (context, index) {
-                    return _vehicleTile(
-                      vehicleNo: controller.otherVehicles[index],
-                      controller: controller,
-                    );
-                  },
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  children: [
+                    // Suggested Section
+                    _buildSectionHeader("Suggested (1)"),
+                    SizedBox(height: 1.h),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12)),
+                      ),
+                      // Assuming "305" is the suggested one
+                      child: _vehicleTile(
+                        vehicleNo: "305", // Hardcoded per plan
+                        subtitle: "Last Selected",
+                        controller: controller,
+                        isFirst: true,
+                        isLast:
+                            false, // Connected to bottom section visually in design
+                      ),
+                    ),
+
+                    // In the design, Suggested and Other Vehicles look somewhat connected or just separate cards.
+                    // Design shows "Suggested (1)" header inside a light blue box, then the list item.
+                    // Actually, looking closely at the image:
+                    // There is a rounded container. Top part is light blue header "Suggested (1)". Bottom part is white list item "305".
+
+                    SizedBox(height: 3.h),
+
+                    // Other Vehicles Section
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSectionHeaderBox(
+                              "Other Vehicles (${controller.otherVehicles.length})"),
+                          ...controller.otherVehicles
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            final index = entry.key;
+                            final vehicle = entry.value;
+                            return _vehicleTile(
+                              vehicleNo: vehicle,
+                              controller: controller,
+                              isFirst: false,
+                              isLast:
+                                  index == controller.otherVehicles.length - 1,
+                              showDivider:
+                                  index != controller.otherVehicles.length - 1,
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.h), // Spacing for bottom button
+                  ],
                 ),
               ),
 
               // DONE button
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
+                padding: EdgeInsets.all(4.w),
+                child: CustomButton(
+                  label: "Done",
+                  height: 6.h,
                   width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: const Text("Done",
-                        style: TextStyle(color: Colors.white)),
-                  ),
+                  borderRadius: 30, // Rounded full
+                  onPressed: () {
+                    Get.back();
+                  },
                 ),
               ),
             ],
@@ -90,20 +136,42 @@ class SelectVehicleView extends StatelessWidget {
     );
   }
 
-  // 🔹 Section title
-  Widget _sectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black54,
-          ),
+  // Header with blue background like in design
+  Widget _buildSectionHeaderBox(String title) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+      decoration: BoxDecoration(
+        color: Color(0xFFEBF8FE), // Light blue background
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
         ),
+      ),
+    );
+  }
+
+  // Standalone header text
+  Widget _buildSectionHeader(String title) {
+    // Re-implementing "Suggested" block to match the "Other Vehicles" style
+    // The design shows "Suggested" block as a card with header.
+    // So I should wrap the Suggested item in a similar structure.
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeaderBox(title),
+          // The tile will be added by the parent
+        ],
       ),
     );
   }
@@ -113,22 +181,51 @@ class SelectVehicleView extends StatelessWidget {
     required String vehicleNo,
     required AssignmentController controller,
     String? subtitle,
+    bool isFirst = false,
+    bool isLast = false,
+    bool showDivider = false,
   }) {
-    // Use Obx or GetBuilder logic. Since we are in GetBuilder, controller state is available.
-    // However, selectedVehicle is an RxString, so we can use it directly if we want reactivity on just this tile,
-    // or rely on GetBuilder update. The controller uses update(), so standard access is fine.
-
+    // Obx for reactivity if needed, but GetBuilder refreshes whole view on update()
     final bool isSelected = controller.selectedVehicle.value == vehicleNo;
 
-    return ListTile(
-      title: Text("Vehicle $vehicleNo"),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Colors.blue)
-          : null,
-      onTap: () {
-        controller.setSelectedVehicle(vehicleNo);
-      },
+    return Column(
+      children: [
+        ListTile(
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.5.h),
+          title: Text(
+            vehicleNo,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: isSelected
+                  ? AppColors.primary
+                  : Colors.black, // Highlight if selected
+            ),
+          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  style: TextStyle(color: Colors.grey, fontSize: 13.5.sp),
+                )
+              : null,
+          trailing: isSelected
+              ? Icon(Icons.check_box_outlined,
+                  color: AppColors.primary, size: 22.sp) // Checkbox style
+              : null,
+          onTap: () {
+            controller.setSelectedVehicle(vehicleNo);
+          },
+        ),
+        if (showDivider)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.grey.shade200,
+            indent: 4.w,
+            endIndent: 4.w,
+          ),
+      ],
     );
   }
 }

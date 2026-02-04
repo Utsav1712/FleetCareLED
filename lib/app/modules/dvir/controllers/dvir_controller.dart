@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_routes.dart';
 
 class DvirController extends GetxController {
   // Form Controllers
@@ -35,12 +36,48 @@ class DvirController extends GetxController {
     inspectionType.value = type;
   }
 
-  void toggleDefectSelection(int index) {
-    // Logic for selecting a defect if needed
+  // Defect Categories
+  final defectCategories = <String, List<String>>{
+    "Exterior - Front": [
+      "Radiator",
+      "Belts Hoses",
+      "Fluid Levels",
+      "Lights, Front"
+    ],
+    "Exterior - Rear": [
+      "Air Lines",
+      "Coupling Devoces",
+      "Lights, Rear",
+      "Brakes"
+    ],
+    "Exterior - Side and Undemeath": [
+      "Tires",
+      "Fuel Tank",
+      "Battery",
+      "Exhaust"
+    ],
+    "Other": ["Lights", "Mirrors", "Wipers", "Horn"],
+  };
+
+  // Selected Defects
+  final selectedDefects = <String>{}.obs;
+
+  void toggleDefect(String defect) {
+    if (selectedDefects.contains(defect)) {
+      selectedDefects.remove(defect);
+    } else {
+      selectedDefects.add(defect);
+    }
   }
 
-  void addDefects() {
-    Get.snackbar("Add Defects", "Feature coming soon");
+  void navigateToAddDefect() {
+    Get.toNamed(AppRoutes.ADD_DEFECT);
+  }
+
+  void saveDefects() {
+    Get.back();
+    // Logic to save defects to the main list
+    // For now just back
   }
 
   void submitDvir() {

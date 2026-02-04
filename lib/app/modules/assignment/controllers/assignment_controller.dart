@@ -15,7 +15,7 @@ class AssignmentController extends GetxController {
     "308"
   ];
 
-  final selectedTrailers = <String>{"TR-101A"}.obs;
+  final selectedTrailer = "TR-101A".obs;
   final List<String> trailers = [
     "TR-101A",
     "TR-102B",
@@ -44,12 +44,8 @@ class AssignmentController extends GetxController {
     update(); // For GetBuilder
   }
 
-  void toggleTrailer(String trailer) {
-    if (selectedTrailers.contains(trailer)) {
-      selectedTrailers.remove(trailer);
-    } else {
-      selectedTrailers.add(trailer);
-    }
+  void setSelectedTrailer(String trailer) {
+    selectedTrailer.value = trailer;
     update();
   }
 

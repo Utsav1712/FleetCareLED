@@ -12,9 +12,11 @@ class DashboardBinding extends Bindings {
     );
     Get.lazyPut<HomeController>(
       () => HomeController(),
+      fenix: true,
     );
     Get.lazyPut<EditProfileController>(
       () => EditProfileController(),
+      fenix: true,
     );
   }
 }

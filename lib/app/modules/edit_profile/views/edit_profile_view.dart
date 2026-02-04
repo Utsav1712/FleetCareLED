@@ -17,7 +17,11 @@ class EditProfileView extends GetView<EditProfileController> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2AA6DF), // Matching dashboard blue
         // Leading removed for tab integration
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
+        ),
         title: CustomText(
           "Edit Driver Profile",
           color: Colors.white,

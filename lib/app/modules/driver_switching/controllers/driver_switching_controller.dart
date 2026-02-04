@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../routes/app_routes.dart';
 
 class DriverSwitchingController extends GetxController {
   final drivers = <DriverProfile>[
@@ -10,7 +11,8 @@ class DriverSwitchingController extends GetxController {
         id: 2,
         name: "Sagar Sahil",
         image: "assets/images/driver_2.png"), // Using generated mock image 2
-    DriverProfile(id: 3, name: "Ajay Gediya", image: ""),
+    DriverProfile(
+        id: 3, name: "Ajay Gediya", image: "assets/images/driver_2.png"),
     DriverProfile(
         id: 4,
         name: "Prince Vadukul",
@@ -36,7 +38,9 @@ class DriverSwitchingController extends GetxController {
   }
 
   void editDriver(int id) {
-    Get.snackbar("Edit", "Edit Driver $id");
+    final driver = drivers.firstWhere((d) => d.id == id);
+    Get.toNamed(AppRoutes.EDIT_PROFILE,
+        arguments: {'name': driver.name, 'image': driver.image});
   }
 }
 

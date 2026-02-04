@@ -136,7 +136,7 @@ class CreateDvirView extends GetView<DvirController> {
               width: double.infinity,
               height: 6.h,
               child: OutlinedButton(
-                onPressed: controller.addDefects,
+                onPressed: controller.navigateToAddDefect,
                 style: OutlinedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),

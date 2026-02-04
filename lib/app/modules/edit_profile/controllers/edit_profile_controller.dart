@@ -15,7 +15,13 @@ class EditProfileController extends GetxController {
   void onInit() {
     super.onInit();
     // Mock Data - In real app, fetch from API/Repository
-    nameController.text = "John Doe";
+    if (Get.arguments != null && Get.arguments is Map) {
+      nameController.text = Get.arguments['name'];
+      // Populate other fields if available in arguments or leave as mock/empty
+    } else {
+      nameController.text = "John Doe";
+    }
+
     driverNumberController.text = "9876543210";
     truckNumberController.text = "GJ-01-XX-1234";
     aadharController.text = "1234 5678 9101";

@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
 
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.obscureText = false,
     this.suffixIcon,
+    this.prefixIcon,
     this.keyboardType,
     this.onChanged,
   }) : super(key: key);
@@ -35,6 +37,7 @@ class CustomTextField extends StatelessWidget {
         hintText: hintText,
         hintStyle: TextStyle(color: AppColors.textHint, fontSize: 15.sp),
         suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
         filled: true,
         fillColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(

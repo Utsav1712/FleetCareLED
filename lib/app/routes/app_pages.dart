@@ -4,6 +4,9 @@ import 'package:fleetcare_eld/app/modules/driver_switching/bindings/driver_switc
 import 'package:fleetcare_eld/app/modules/driver_switching/views/driver_switching_view.dart';
 import 'package:fleetcare_eld/app/modules/dvir/bindings/dvir_binding.dart';
 import 'package:fleetcare_eld/app/modules/dvir/views/create_dvir_view.dart';
+import 'package:fleetcare_eld/app/modules/dvir/views/add_defect_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/bindings/dot_inspection_binding.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/dot_inspection_view.dart';
 import 'package:fleetcare_eld/app/modules/help/bindings/help_binding.dart';
 import 'package:fleetcare_eld/app/modules/help/views/help_view.dart';
 import 'package:fleetcare_eld/app/modules/settings/bindings/settings_binding.dart';
@@ -121,6 +124,11 @@ class AppPages {
       binding: DriverSwitchingBinding(),
     ),
     GetPage(
+      name: AppRoutes.ADD_DEFECT,
+      page: () => const AddDefectView(),
+      binding: DvirBinding(),
+    ),
+    GetPage(
       name: AppRoutes.ROUTES,
       page: () => const RoutesView(),
     ),
@@ -146,6 +154,11 @@ class AppPages {
       name: AppRoutes.SETTINGS,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DOT_INSPECTION,
+      page: () => const DotInspectionView(),
+      binding: DotInspectionBinding(),
     ),
     GetPage(
       name: AppRoutes.EDIT_PROFILE,
