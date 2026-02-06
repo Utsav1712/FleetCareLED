@@ -27,6 +27,8 @@ abstract class AppRoutes {
   static const DRIVER_SWITCHING = _Paths.DRIVER_SWITCHING;
   static const ADD_DEFECT = _Paths.ADD_DEFECT;
   static const DOT_INSPECTION = _Paths.DOT_INSPECTION;
+  static const DOT_INSPECTION_DETAIL = _Paths.DOT_INSPECTION_DETAIL;
+  static const ACCESS_CODE = _Paths.ACCESS_CODE;
 }
 
 abstract class _Paths {
@@ -58,4 +60,6 @@ abstract class _Paths {
   static const DRIVER_SWITCHING = '/driver_switching';
   static const ADD_DEFECT = '/add-defect';
   static const DOT_INSPECTION = '/dot-inspection';
+  static const DOT_INSPECTION_DETAIL = '/dot-inspection-detail';
+  static const ACCESS_CODE = '/access-code';
 }

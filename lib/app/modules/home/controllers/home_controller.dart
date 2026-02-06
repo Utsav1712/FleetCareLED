@@ -4,13 +4,20 @@ import 'package:get/get.dart';
 import '../../../data/models/duty_status.dart';
 import '../../../core/values/app_colors.dart';
 import '../../../global_widgets/custom_dialog_box.dart';
+import '../../../services/driver_service.dart';
 
 class HomeController extends GetxController {
+  final DriverService _driverService =
+      Get.find<DriverService>(); // Injected Service
+
   // State from original HomeScreen & DriverProvider
   final currentStatus = Rx<DutyStatus>(DutyStatus.offDuty);
   final selectedNote = "No note".obs;
   final showQuickActions = false.obs;
   final currentIndex = 0.obs;
+
+  // Driver Info
+  Rx<DriverProfile?> get currentDriver => _driverService.currentDriver;
 
   // Auth & Co-Driver State
   final isCoDriverLoggedIn = true.obs; // Mocked as true for testing UI

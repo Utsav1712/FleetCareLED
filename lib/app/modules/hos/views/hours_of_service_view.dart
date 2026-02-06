@@ -20,11 +20,22 @@ class HoursOfServiceView extends StatelessWidget {
           backgroundColor: AppColors.scaffoldBackground,
           appBar: AppBar(
             backgroundColor: AppColors.primary,
-            title: CustomText(
-              "Hours of Service",
-              color: Colors.white,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  "Hours of Service",
+                  color: Colors.white,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+                Obx(() => CustomText(
+                      "Driver: ${controller.currentDriver.value?.name ?? 'Unknown'}",
+                      color: Colors.white70,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w400,
+                    )),
+              ],
             ),
             leading: IconButton(
               icon: Icon(Icons.arrow_back, size: 20.sp),

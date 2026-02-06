@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../core/values/app_colors.dart';
 import '../../../global_widgets/custom_text.dart';
+import '../../../services/driver_service.dart';
 import '../controllers/driver_switching_controller.dart';
 
 class DriverSwitchingView extends GetView<DriverSwitchingController> {
@@ -56,7 +57,7 @@ class DriverSwitchingView extends GetView<DriverSwitchingController> {
               children: [
                 Expanded(
                     child: Obx(() => _buildDriverCard(
-                        controller.currentDriver.value, "1st"))),
+                        controller.currentDriver.value, "Current Driver"))),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 2.w),
                   child: Column(
@@ -68,8 +69,8 @@ class DriverSwitchingView extends GetView<DriverSwitchingController> {
                   ),
                 ),
                 Expanded(
-                    child: Obx(() =>
-                        _buildDriverCard(controller.coDriver.value, "2nd"))),
+                    child: Obx(() => _buildDriverCard(
+                        controller.coDriver.value, "Co-Driver"))),
               ],
             ),
           ],
@@ -108,14 +109,52 @@ class DriverSwitchingView extends GetView<DriverSwitchingController> {
             ),
           ),
           SizedBox(width: 4.w),
-          Text(
-            driver.name,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+          Column(children: [
+            Text(
+              driver.name,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
+            SizedBox(height: 1.h),
+            Obx(() {
+              if (controller.currentDriver.value?.id == driver.id) {
+                return Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.success),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 1.5.h,
+                        width: 1.5.h,
+                        decoration: const BoxDecoration(
+                          color: AppColors.success,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      Text(
+                        "Current Driver",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
+          ]),
           const Spacer(),
           TextButton(
             onPressed: () => controller.editDriver(driver.id),
@@ -164,7 +203,7 @@ class DriverSwitchingView extends GetView<DriverSwitchingController> {
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 13.sp,
+                fontSize: 12.sp, // Slightly reduced font size for longer text
               ),
             ),
           ),

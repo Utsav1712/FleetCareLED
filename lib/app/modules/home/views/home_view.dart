@@ -28,14 +28,15 @@ class HomeView extends GetView<HomeController> {
                           Get.find<DashboardController>();
                       dashboardController.changeTab(3);
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.person, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          "user",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+                        const Icon(Icons.person, size: 18),
+                        const SizedBox(width: 6),
+                        Obx(() => Text(
+                              controller.currentDriver.value?.name ?? "User",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
+                            )),
                       ],
                     ),
                   ),

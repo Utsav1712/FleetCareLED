@@ -5,8 +5,11 @@ import 'package:fleetcare_eld/app/modules/driver_switching/views/driver_switchin
 import 'package:fleetcare_eld/app/modules/dvir/bindings/dvir_binding.dart';
 import 'package:fleetcare_eld/app/modules/dvir/views/create_dvir_view.dart';
 import 'package:fleetcare_eld/app/modules/dvir/views/add_defect_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/bindings/access_code_binding.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/access_code_view.dart';
 import 'package:fleetcare_eld/app/modules/dot_inspection/bindings/dot_inspection_binding.dart';
 import 'package:fleetcare_eld/app/modules/dot_inspection/views/dot_inspection_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/dot_inspection_detail_view.dart';
 import 'package:fleetcare_eld/app/modules/help/bindings/help_binding.dart';
 import 'package:fleetcare_eld/app/modules/help/views/help_view.dart';
 import 'package:fleetcare_eld/app/modules/settings/bindings/settings_binding.dart';
@@ -159,6 +162,15 @@ class AppPages {
       name: AppRoutes.DOT_INSPECTION,
       page: () => const DotInspectionView(),
       binding: DotInspectionBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DOT_INSPECTION_DETAIL,
+      page: () => const DotInspectionDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.ACCESS_CODE,
+      page: () => const AccessCodeView(),
+      binding: AccessCodeBinding(),
     ),
     GetPage(
       name: AppRoutes.EDIT_PROFILE,
