@@ -1,3 +1,19 @@
+import 'package:fleetcare_eld/app/modules/dashboard/bindings/dashboard_binding.dart';
+import 'package:fleetcare_eld/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:fleetcare_eld/app/modules/driver_switching/bindings/driver_switching_binding.dart';
+import 'package:fleetcare_eld/app/modules/driver_switching/views/driver_switching_view.dart';
+import 'package:fleetcare_eld/app/modules/dvir/bindings/dvir_binding.dart';
+import 'package:fleetcare_eld/app/modules/dvir/views/create_dvir_view.dart';
+import 'package:fleetcare_eld/app/modules/dvir/views/add_defect_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/bindings/access_code_binding.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/access_code_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/bindings/dot_inspection_binding.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/dot_inspection_view.dart';
+import 'package:fleetcare_eld/app/modules/dot_inspection/views/dot_inspection_detail_view.dart';
+import 'package:fleetcare_eld/app/modules/help/bindings/help_binding.dart';
+import 'package:fleetcare_eld/app/modules/help/views/help_view.dart';
+import 'package:fleetcare_eld/app/modules/settings/bindings/settings_binding.dart';
+import 'package:fleetcare_eld/app/modules/settings/views/settings_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/assignment/bindings/assignment_binding.dart';
@@ -11,10 +27,13 @@ import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/signup_view.dart';
 import '../modules/auth/views/forgot_password_view.dart';
+import '../modules/edit_profile/bindings/edit_profile_binding.dart';
+import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/hos/bindings/hours_of_service_binding.dart';
 import '../modules/hos/views/hours_of_service_view.dart';
 import '../modules/dvir/views/dvir_view.dart';
 import '../modules/routes/views/routes_view.dart';
@@ -22,6 +41,8 @@ import '../modules/forms/views/forms_view.dart';
 import '../modules/fueling/views/fueling_view.dart';
 import '../modules/co_driver_login/bindings/co_driver_login_binding.dart';
 import '../modules/co_driver_login/views/co_driver_login_view.dart';
+import '../modules/daily_log/bindings/daily_log_binding.dart';
+import '../modules/daily_log/views/daily_log_view.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -88,10 +109,27 @@ class AppPages {
     GetPage(
       name: AppRoutes.HOS,
       page: () => const HoursOfServiceView(),
+      binding: HoursOfServiceBinding(),
     ),
     GetPage(
       name: AppRoutes.DVIR,
       page: () => const DvirView(),
+      binding: DvirBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CREATE_DVIR,
+      page: () => const CreateDvirView(),
+      binding: DvirBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DRIVER_SWITCHING,
+      page: () => const DriverSwitchingView(),
+      binding: DriverSwitchingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADD_DEFECT,
+      page: () => const AddDefectView(),
+      binding: DvirBinding(),
     ),
     GetPage(
       name: AppRoutes.ROUTES,
@@ -109,6 +147,45 @@ class AppPages {
       name: AppRoutes.CO_DRIVER_LOGIN,
       page: () => const CoDriverLoginView(),
       binding: CoDriverLoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DAILY_LOG,
+      page: () => const DailyLogView(),
+      binding: DailyLogBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DOT_INSPECTION,
+      page: () => const DotInspectionView(),
+      binding: DotInspectionBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DOT_INSPECTION_DETAIL,
+      page: () => const DotInspectionDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.ACCESS_CODE,
+      page: () => const AccessCodeView(),
+      binding: AccessCodeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.EDIT_PROFILE,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DASHBOARD,
+      page: () => const DashboardView(),
+      binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.HELP,
+      page: () => const HelpView(),
+      binding: HelpBinding(),
     ),
   ];
 }

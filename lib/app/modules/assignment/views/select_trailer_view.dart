@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../../core/values/app_colors.dart';
+import '../../../global_widgets/custom_button.dart';
+import '../../../global_widgets/custom_text_field.dart';
+import '../../../global_widgets/custom_text.dart';
 import '../controllers/assignment_controller.dart';
-import '../../../routes/app_routes.dart';
 
 class SelectTrailerView extends StatelessWidget {
   const SelectTrailerView({Key? key}) : super(key: key);
@@ -11,72 +15,105 @@ class SelectTrailerView extends StatelessWidget {
     return GetBuilder<AssignmentController>(
       builder: (controller) {
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text("Select Trailer(s)"),
-            backgroundColor: Colors.blue,
+            title: CustomText(
+              "Select Trailer(s)",
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            centerTitle: true,
+            backgroundColor: AppColors.primary,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: Colors.white, size: 20.sp),
               onPressed: () => Get.back(),
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.add),
+                icon: Icon(Icons.add, color: Colors.white, size: 20.sp),
                 onPressed: controller.navigateToManualTrailer,
               )
             ],
           ),
           body: Column(
             children: [
-              // 🔍 Search
+              // 🔍 Search bar
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search here...",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                padding: EdgeInsets.all(4.w),
+                child: CustomTextField(
+                  hintText: "Search here...",
+                  suffixIcon:
+                      Icon(Icons.search, color: Colors.grey, size: 20.sp),
                 ),
               ),
-
-              _sectionTitle("Suggested (1)"),
-              _trailerTile("TR-101A", controller, subtitle: "Last Selected"),
-
-              _sectionTitle("Other Trailers"),
 
               Expanded(
-                child: ListView.builder(
-                  itemCount: controller.trailers.length,
-                  itemBuilder: (context, index) {
-                    return _trailerTile(controller.trailers[index], controller);
-                  },
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  children: [
+                    // Suggested Section
+                    _buildSectionHeader("Suggested (1)"),
+                    SizedBox(height: 1.h),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12)),
+                      ),
+                      child: _trailerTile(
+                        trailer: "TR-101A",
+                        controller: controller,
+                        subtitle: "Last Selected",
+                        isFirst: true,
+                        isLast: false,
+                      ),
+                    ),
+                    SizedBox(height: 3.h),
+
+                    // Other Trailers Section
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSectionHeaderBox(
+                              "Other Trailers (${controller.trailers.length})"),
+                          ...controller.trailers.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final trailer = entry.value;
+                            return _trailerTile(
+                              trailer: trailer,
+                              controller: controller,
+                              isFirst: false,
+                              isLast: index == controller.trailers.length - 1,
+                              showDivider:
+                                  index != controller.trailers.length - 1,
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
                 ),
               ),
 
-              // DONE
+              // DONE button
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
+                padding: EdgeInsets.all(4.w),
+                child: CustomButton(
+                  label: "Done",
+                  height: 6.h,
                   width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: const Text("Done",
-                        style: TextStyle(color: Colors.white)),
-                  ),
+                  borderRadius: 30,
+                  onPressed: () {
+                    Get.back();
+                  },
                 ),
               ),
             ],
@@ -86,35 +123,85 @@ class SelectTrailerView extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black54,
-          ),
+  Widget _buildSectionHeaderBox(String title) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+      decoration: BoxDecoration(
+        color: Color(0xFFEBF8FE), // Light blue background
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
         ),
       ),
     );
   }
 
-  Widget _trailerTile(String trailer, AssignmentController controller,
-      {String? subtitle}) {
-    final bool isSelected = controller.selectedTrailers.contains(trailer);
+  Widget _buildSectionHeader(String title) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeaderBox(title),
+        ],
+      ),
+    );
+  }
 
-    return ListTile(
-      title: Text(trailer),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Colors.blue)
-          : null,
-      onTap: () {
-        controller.toggleTrailer(trailer);
-      },
+  Widget _trailerTile({
+    required String trailer,
+    required AssignmentController controller,
+    String? subtitle,
+    bool isFirst = false,
+    bool isLast = false,
+    bool showDivider = false,
+  }) {
+    final bool isSelected = controller.selectedTrailer.value == trailer;
+
+    return Column(
+      children: [
+        ListTile(
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.5.h),
+          title: Text(
+            trailer,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? AppColors.primary : Colors.black,
+            ),
+          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  style: TextStyle(color: Colors.grey, fontSize: 13.5.sp),
+                )
+              : null,
+          trailing: isSelected
+              ? Icon(Icons.check_circle, color: AppColors.primary, size: 22.sp)
+              : null,
+          onTap: () {
+            controller.setSelectedTrailer(trailer);
+          },
+        ),
+        if (showDivider)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.grey.shade200,
+            indent: 4.w,
+            endIndent: 4.w,
+          ),
+      ],
     );
   }
 }

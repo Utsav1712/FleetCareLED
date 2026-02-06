@@ -18,6 +18,17 @@ abstract class AppRoutes {
   static const FUELING = _Paths.FUELING;
   static const CO_DRIVER_LOGIN = _Paths.CO_DRIVER_LOGIN;
   static const SPLASH = _Paths.SPLASH;
+  static const DAILY_LOG = _Paths.DAILY_LOG;
+  static const SETTINGS = _Paths.SETTINGS;
+  static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
+  static const DASHBOARD = _Paths.DASHBOARD;
+  static const HELP = _Paths.HELP;
+  static const CREATE_DVIR = _Paths.CREATE_DVIR;
+  static const DRIVER_SWITCHING = _Paths.DRIVER_SWITCHING;
+  static const ADD_DEFECT = _Paths.ADD_DEFECT;
+  static const DOT_INSPECTION = _Paths.DOT_INSPECTION;
+  static const DOT_INSPECTION_DETAIL = _Paths.DOT_INSPECTION_DETAIL;
+  static const ACCESS_CODE = _Paths.ACCESS_CODE;
 }
 
 abstract class _Paths {
@@ -40,4 +51,15 @@ abstract class _Paths {
   static const FUELING = '/fueling';
   static const CO_DRIVER_LOGIN = '/co-driver-login';
   static const SPLASH = '/splash';
+  static const DAILY_LOG = '/daily-log';
+  static const SETTINGS = '/settings';
+  static const EDIT_PROFILE = '/edit-profile';
+  static const DASHBOARD = '/dashboard';
+  static const HELP = '/help';
+  static const CREATE_DVIR = '/create_dvir';
+  static const DRIVER_SWITCHING = '/driver_switching';
+  static const ADD_DEFECT = '/add-defect';
+  static const DOT_INSPECTION = '/dot-inspection';
+  static const DOT_INSPECTION_DETAIL = '/dot-inspection-detail';
+  static const ACCESS_CODE = '/access-code';
 }

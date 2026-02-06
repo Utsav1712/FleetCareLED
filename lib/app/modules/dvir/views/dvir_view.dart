@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_routes.dart';
 import '../../../core/values/app_colors.dart';
 import '../../../global_widgets/custom_button.dart';
 import '../../../global_widgets/custom_text.dart';
@@ -51,7 +52,7 @@ class DvirView extends StatelessWidget {
               height: 46,
               borderRadius: 24,
               onPressed: () {
-                // Create DVIR
+                Get.toNamed(AppRoutes.CREATE_DVIR);
               },
             ),
           ),
